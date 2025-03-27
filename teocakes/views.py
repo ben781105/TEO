@@ -8,7 +8,8 @@ from django.contrib.auth import get_user_model
 from decimal import Decimal
 import uuid
 from django.conf import settings
-BASE_URL = 'http://localhost:5173'
+BASE_URL =settings.REACT_BASE_URL
+#BASE_URL = 'http://localhost:5173'
 @api_view(['GET'])
 def cakes(request):
     cakes = Cake.objects.all()
