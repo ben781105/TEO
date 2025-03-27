@@ -5,10 +5,11 @@ from rest_framework.response import Response
 from rest_framework import status,generics
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
-from decimal import Decimal
-import uuid
 from django.conf import settings
-BASE_URL = 'http://localhost:5173'
+
+BASE_URL =settings.REACT_BASE_URL
+
+#BASE_URL = 'http://localhost:5173'
 @api_view(['GET'])
 def cakes(request):
     cakes = Cake.objects.all()
@@ -39,6 +40,8 @@ def add_cake(request):
         return Response({"data":serializer.data, "message":"Cart created successfully", "status":201})
     except Exception as e:
         return Response({"error":str(e), "status":400})
+    
+
     
 
 @api_view(['GET'])    
