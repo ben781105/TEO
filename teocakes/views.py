@@ -6,6 +6,7 @@ from rest_framework import status,generics
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from django.conf import settings
+<<<<<<< HEAD
 import paypalrestsdk
 import uuid
 BASE_URL =settings.REACT_BASE_URL or 'http://localhost:5173'
@@ -15,6 +16,9 @@ paypalrestsdk.configure({
     'client_id':settings.PAYPAL_CLIENT_ID,
     'client_secret':settings.PAYPAL_CLIENT_SECRET
 })
+=======
+BASE_URL =settings.REACT_BASE_URL
+>>>>>>> 7fb9ae95a59be0e8a03441a62c0edbc1016af45b
 #BASE_URL = 'http://localhost:5173'
 @api_view(['GET'])
 def cakes(request):

@@ -67,8 +67,12 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5177",
     "http://localhost:5178",
     "http://localhost:5179",
+<<<<<<< HEAD
     'https://cakeshop-wi4m.onrender.com'
     
+=======
+    'https://cakeshop-wi4m.onrender.com',
+>>>>>>> 7fb9ae95a59be0e8a03441a62c0edbc1016af45b
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -160,7 +164,10 @@ SIMPLE_JWT ={
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60)
 }
 REACT_BASE_URL = os.getenv('REACT_BASE_URL', 'http://localhost:5173')
+<<<<<<< HEAD
 
 PAYPAL_CLIENT_ID ='AZkgAcyn1TzURusDLFPVBXsRGBWAJnLleY7DBtSYnHLq6Td9BkOxt3Ka49rozgfmEaj8NfNS6FkHuQxi'
 PAYPAL_CLIENT_SECRET ='EFanwEfDWoTipQdYYLvikJ1cje0gbo4WHpRjpKAjkrlDnVv4RMj7eaMsh3paW8bFkzLRYwQD3N2RqlL-'
 PAYPAL_MODE = 'sandbox'
+=======
+>>>>>>> 7fb9ae95a59be0e8a03441a62c0edbc1016af45b
