@@ -28,6 +28,7 @@ class CartItemSerializer(serializers.ModelSerializer):
     def get_total(self,cartitem):
         price = cartitem.cake.price * cartitem.quantity
         return price
+
     
 class CartSerializer(serializers.ModelSerializer):
     cakes = CartItemSerializer(read_only=True, many=True)
@@ -64,7 +65,28 @@ class ContactMessageSerializer(serializers.ModelSerializer):
         model = ContactMessage
         fields = '__all__'
 
+class NewCartItemSerializer(serializers.ModelSerializer):
+    cake = CakeSerializer(read_only=True)
+    order_id =serializers.SerializerMethodField()
+    order_date = serializers.SerializerMethodField()
+    class Meta:
+        model = CartItem
+        fields =['id','cake','quantity','order_id','order_date']
+
+    def get_order_id(self,cartitem):
+        order_id = cartitem.cart.cart_id
+        return order_id
+    def get_order_date(self,cartitem):
+        order_date = cartitem.cart.modified_at
+        return order_date
+
 class UserSerializer(serializers.ModelSerializer):
+    ordered_cakes = serializers.SerializerMethodField()
     class Meta:
         model = get_user_model()
-        fields =['id','City','username','first_name','last_name','Phone','Address','email']
+        fields =['id','City','username','first_name','last_name','Phone','Address','email','ordered_cakes']
+
+    def get_ordered_cakes(self,user):
+        cartitems = CartItem.objects.filter(cart__user= user,cart__paid = True)
+        serializer = NewCartItemSerializer(cartitems,many=True)
+        return serializer.data

@@ -58,5 +58,19 @@ class ContactMessage(models.Model):
     def __str__(self):
         return self.subject
     
+class Transaction(models.Model):
+    tx_ref = models.CharField(max_length=200 ,unique=True)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='transactions')
+    amount = models.DecimalField(max_digits=11, decimal_places=2)
+    currency = models.CharField(max_length=10,default='USD')
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at=models.DateTimeField(auto_now=True)
+    user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
+    status=models.CharField(max_length=100,default='pending')
+
+    def __str__(self):
+        return f'transaction {self.tx_ref} - {self.status}'
+
+    
 
   

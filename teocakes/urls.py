@@ -14,5 +14,7 @@ urlpatterns = [
     path('contact/',ContactMessageView.as_view(),name='contact-message'),
     path('get_username',views.get_username,name='get_username'),
     path('get_user_info',views.get_user_info,name='user_info'),
-    path('register/',views.register_user, name='register')
+    path('register/',views.register_user, name='register'),
+    path('initiate_paypal_payment/', views.initiate_paypal_payment, name='initiate_paypal_payment'),
+    path('paypal_payment_callback/', views.paypal_payment_callback, name='paypal_payment_callback'),
 ]

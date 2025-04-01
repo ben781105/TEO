@@ -1,4 +1,4 @@
-from .models import Cake, Cart, CartItem,ContactMessage
+from .models import Cake, Cart, CartItem,ContactMessage,Transaction
 from .serializers import CakeSerializer,DetailedCakeSerializer,CartItemSerializer,NumberCartSerializer, CartSerializer,ContactMessageSerializer,UserSerializer
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
@@ -6,9 +6,15 @@ from rest_framework import status,generics
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from django.conf import settings
+import paypalrestsdk
+import uuid
+BASE_URL =settings.REACT_BASE_URL or 'http://localhost:5173'
 
-BASE_URL =settings.REACT_BASE_URL
-
+paypalrestsdk.configure({
+    'mode':settings.PAYPAL_MODE,
+    'client_id':settings.PAYPAL_CLIENT_ID,
+    'client_secret':settings.PAYPAL_CLIENT_SECRET
+})
 #BASE_URL = 'http://localhost:5173'
 @api_view(['GET'])
 def cakes(request):
@@ -138,4 +144,98 @@ def register_user(request):
 
     return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
 
+@api_view(['POST'])
+def initiate_paypal_payment(request):
+    if request.method == 'POST' and request.user.is_authenticated:
+        tx_ref = str(uuid.uuid4())
+        user = request.user
+        cart_id = request.data.get('cart_id')
 
+        # Validate cart_id
+        if not cart_id:
+            return Response({"error": "Cart ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            cart = Cart.objects.get(cart_id=cart_id)
+        except Cart.DoesNotExist:
+            return Response({"error": "Cart not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Ensure correct decimal conversion
+        from decimal import Decimal
+
+        amount = sum(Decimal(cake.cake.price) * Decimal(cake.quantity) for cake in cart.cakes.all())
+        tax = amount * Decimal('0.18')
+        total = amount + tax
+
+        payment = paypalrestsdk.Payment({
+            "intent": "sale",
+            "payer": {"payment_method": "paypal"},
+            "redirect_urls": {
+                "return_url": f"{BASE_URL}/status?paymentStatus=success&tx_ref={tx_ref}",
+                "cancel_url": f"{BASE_URL}/status?paymentStatus=cancel"
+            },
+            "transactions": [{
+                "item_list": {
+                    "items": [{
+                        "name": "Cart-item",
+                        "sku": "cart",
+                        "price": f"{total:.2f}",
+                        "currency": "USD",
+                        "quantity": 1
+                    }]
+                },
+                "amount": {
+                    "total": f"{total:.2f}",
+                    "currency": "USD"
+                },
+                "description": f"Payment for cart items for user"
+            }]
+        })
+
+        transaction, created = Transaction.objects.get_or_create(
+            tx_ref=tx_ref,
+            cart=cart,
+            user=user,
+            amount=total,
+            status='pending',
+        )
+
+        if payment.create():
+            for link in payment.links:
+                if link.rel == 'approval_url':
+                    return Response({'approvalUrl': str(link.href)}, status=status.HTTP_201_CREATED)
+
+        return Response({'error': payment.error}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def paypal_payment_callback(request):
+    # Extracting the query parameters from the URL
+    payment_id = request.query_params.get('paymentId')
+    payer_id = request.query_params.get('PayerID')
+    tx_ref = request.query_params.get('tx_ref')
+
+    try:
+        transaction = Transaction.objects.get(tx_ref=tx_ref)
+    except Transaction.DoesNotExist:
+        return Response({'error': 'Transaction not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Check if the transaction has already been completed
+    if transaction.status == 'completed':
+        return Response({'error': 'Payment has already been done for this cart.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Check and execute the payment with PayPal SDK
+    if payment_id and payer_id and tx_ref:
+        payment = paypalrestsdk.Payment.find(payment_id)
+        if payment.execute({'payer_id': payer_id}):
+            transaction.status = 'completed'
+            transaction.save()
+            cart = transaction.cart  
+            cart.paid = True
+            cart.user = request.user
+            cart.save()
+            return Response({'message': 'Your payment was processed successfully 🎉'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Payment execution failed'}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response({'error': 'Missing required parameters'}, status=status.HTTP_400_BAD_REQUEST)
