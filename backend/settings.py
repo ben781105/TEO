@@ -23,6 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-d11tpwdhpkzpoxe&eraw$y)u5_-rthnwefer(00n3^!b-a%*1f'
+CSRF_TRUSTED_ORIGINS = ["https://teo-1.onrender.com"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
