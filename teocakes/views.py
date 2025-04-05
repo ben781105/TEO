@@ -8,15 +8,15 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 import paypalrestsdk
 import uuid
-BASE_URL =settings.REACT_BASE_URL or 'http://localhost:5173'
+
 
 paypalrestsdk.configure({
     'mode':settings.PAYPAL_MODE,
     'client_id':settings.PAYPAL_CLIENT_ID,
-    'client_secret':settings.PAYPAL_CLIENT_SECRET
+    'client_secret':settings.PAYPAL_CLIENT_SECRET,
 })
 
-BASE_URL =settings.REACT_BASE_URL
+BASE_URL = settings.REACT_BASE_URL
 
 #BASE_URL = 'http://localhost:5173'
 @api_view(['GET'])
