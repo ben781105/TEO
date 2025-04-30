@@ -6,7 +6,6 @@ from rest_framework import status,generics
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from django.conf import settings
-<<<<<<< HEAD
 import paypalrestsdk
 import uuid
 BASE_URL =settings.REACT_BASE_URL or 'http://localhost:5173'
@@ -16,9 +15,6 @@ paypalrestsdk.configure({
     'client_id':settings.PAYPAL_CLIENT_ID,
     'client_secret':settings.PAYPAL_CLIENT_SECRET
 })
-=======
-BASE_URL =settings.REACT_BASE_URL
->>>>>>> 7fb9ae95a59be0e8a03441a62c0edbc1016af45b
 #BASE_URL = 'http://localhost:5173'
 @api_view(['GET'])
 def cakes(request):
@@ -155,7 +151,7 @@ def initiate_paypal_payment(request):
         user = request.user
         cart_id = request.data.get('cart_id')
 
-        # Validate cart_id
+        #checking if cart_id is available
         if not cart_id:
             return Response({"error": "Cart ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -164,7 +160,7 @@ def initiate_paypal_payment(request):
         except Cart.DoesNotExist:
             return Response({"error": "Cart not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Ensure correct decimal conversion
+    
         from decimal import Decimal
 
         amount = sum(Decimal(cake.cake.price) * Decimal(cake.quantity) for cake in cart.cakes.all())
