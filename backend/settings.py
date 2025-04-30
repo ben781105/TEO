@@ -22,12 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-d11tpwdhpkzpoxe&eraw$y)u5_-rthnwefer(00n3^!b-a%*1f'
+SECRET_KEY = (os.getenv('SECRET_KEY') or 'django-insecure-d11tpwdhpkzpoxe&eraw$y)u5_-rthnwefer(00n3^!b-a%*1f')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'cakeshop-wi4m.onrender.com']
 
 
 # Application definition
@@ -166,7 +166,7 @@ SIMPLE_JWT ={
 REACT_BASE_URL = os.getenv('REACT_BASE_URL', 'http://localhost:5173')
 
 
-PAYPAL_CLIENT_ID ='AZkgAcyn1TzURusDLFPVBXsRGBWAJnLleY7DBtSYnHLq6Td9BkOxt3Ka49rozgfmEaj8NfNS6FkHuQxi'
-PAYPAL_CLIENT_SECRET ='EFanwEfDWoTipQdYYLvikJ1cje0gbo4WHpRjpKAjkrlDnVv4RMj7eaMsh3paW8bFkzLRYwQD3N2RqlL-'
+PAYPAL_CLIENT_ID =os.getenv('PAYPAL_CLIENT_ID')
+PAYPAL_CLIENT_SECRET =os.getenv('PAYPAL_CLIENT_SECRET')
 PAYPAL_MODE = 'sandbox'
 
