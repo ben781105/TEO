@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from django.conf import settings
 import paypalrestsdk
+from django.views.decorators.csrf import csrf_exempt
 import uuid
 BASE_URL =settings.REACT_BASE_URL or 'http://localhost:5173'
 
@@ -144,6 +145,7 @@ def register_user(request):
 
     return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
 
+@csrf_exempt
 @api_view(['POST'])
 def initiate_paypal_payment(request):
     if request.method == 'POST' and request.user.is_authenticated:
@@ -208,6 +210,7 @@ def initiate_paypal_payment(request):
         return Response({'error': payment.error}, status=status.HTTP_400_BAD_REQUEST)
 
 
+@csrf_exempt
 @api_view(['POST'])
 def paypal_payment_callback(request):
     # Extracting the query parameters from the URL
