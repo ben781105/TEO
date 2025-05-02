@@ -75,7 +75,7 @@ CORS_ALLOWED_ORIGINS = [
     'https://cakeshop-wi4m.onrender.com',
     'https://teofront-mdabwr1su-benards-projects-4dfc2d09.vercel.app',
     'https://teofront-git-main-benards-projects-4dfc2d09.vercel.app',
-    'https://teofront.vercel.app/',
+    'https://teofront.vercel.app',
     
 ]
 
