@@ -27,7 +27,7 @@ SECRET_KEY = (os.getenv('SECRET_KEY') or 'django-insecure-d11tpwdhpkzpoxe&eraw$y
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'cakeshop-wi4m.onrender.com','teofront-mdabwr1su-benards-projects-4dfc2d09.vercel.app','teo.onrender.com']
+ALLOWED_HOSTS = ['127.0.0.1','teofront.vercel.app','teofront-git-main-benards-projects-4dfc2d09.vercel.app','localhost', 'cakeshop-wi4m.onrender.com','teofront-mdabwr1su-benards-projects-4dfc2d09.vercel.app','teo.onrender.com']
 
 
 # Application definition
@@ -74,6 +74,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5179",
     'https://cakeshop-wi4m.onrender.com',
     'https://teofront-mdabwr1su-benards-projects-4dfc2d09.vercel.app',
+    'https://teofront-git-main-benards-projects-4dfc2d09.vercel.app',
+    'https://teofront.vercel.app/',
     
 ]
 
