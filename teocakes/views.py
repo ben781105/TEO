@@ -148,70 +148,73 @@ def register_user(request):
 @csrf_exempt
 @api_view(['POST'])
 def initiate_paypal_payment(request):
-       if not request.user.is_authenticated:
+    if not request.user.is_authenticated:
         return Response(
             {"error": "Authentication required"},
             status=status.HTTP_401_UNAUTHORIZED
         )
-        tx_ref = str(uuid.uuid4())
-        user = request.user
-        cart_id = request.data.get('cart_id')
-
-        #checking if cart_id is available
-        if not cart_id:
-            return Response({"error": "Cart ID is required"}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            cart = Cart.objects.get(cart_id=cart_id)
-        except Cart.DoesNotExist:
-            return Response({"error": "Cart not found"}, status=status.HTTP_404_NOT_FOUND)
-
     
-        from decimal import Decimal
+    tx_ref = str(uuid.uuid4())
+    user = request.user
+    cart_id = request.data.get('cart_id')
 
-        amount = sum(Decimal(cake.cake.price) * Decimal(cake.quantity) for cake in cart.cakes.all())
-        tax = amount * Decimal('0.18')
-        total = amount + tax
+    if not cart_id:
+        return Response({"error": "Cart ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-        payment = paypalrestsdk.Payment({
-            "intent": "sale",
-            "payer": {"payment_method": "paypal"},
-            "redirect_urls": {
-                "return_url": f"{BASE_URL}/status?paymentStatus=success&tx_ref={tx_ref}",
-                "cancel_url": f"{BASE_URL}/status?paymentStatus=cancel"
+    try:
+        cart = Cart.objects.get(cart_id=cart_id)
+    except Cart.DoesNotExist:
+        return Response({"error": "Cart not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    from decimal import Decimal
+
+    amount = sum(Decimal(cake.cake.price) * Decimal(cake.quantity) for cake in cart.cakes.all())
+    tax = amount * Decimal('0.18')
+    total = amount + tax
+
+    payment = paypalrestsdk.Payment({
+        "intent": "sale",
+        "payer": {"payment_method": "paypal"},
+        "redirect_urls": {
+            "return_url": f"{BASE_URL}/status?paymentStatus=success&tx_ref={tx_ref}",
+            "cancel_url": f"{BASE_URL}/status?paymentStatus=cancel"
+        },
+        "transactions": [{
+            "item_list": {
+                "items": [{
+                    "name": "Cart-item",
+                    "sku": "cart",
+                    "price": f"{total:.2f}",
+                    "currency": "USD",
+                    "quantity": 1
+                }]
             },
-            "transactions": [{
-                "item_list": {
-                    "items": [{
-                        "name": "Cart-item",
-                        "sku": "cart",
-                        "price": f"{total:.2f}",
-                        "currency": "USD",
-                        "quantity": 1
-                    }]
-                },
-                "amount": {
-                    "total": f"{total:.2f}",
-                    "currency": "USD"
-                },
-                "description": f"Payment for cart items for user"
-            }]
-        })
+            "amount": {
+                "total": f"{total:.2f}",
+                "currency": "USD"
+            },
+            "description": f"Payment for cart items for user"
+        }]
+    })
 
-        transaction, created = Transaction.objects.get_or_create(
-            tx_ref=tx_ref,
-            cart=cart,
-            user=user,
-            amount=total,
-            status='pending',
-        )
+    transaction, created = Transaction.objects.get_or_create(
+        tx_ref=tx_ref,
+        cart=cart,
+        user=user,
+        amount=total,
+        status='pending',
+    )
 
-        if payment.create():
-            for link in payment.links:
-                if link.rel == 'approval_url':
-                    return Response({'approvalUrl': str(link.href)}, status=status.HTTP_201_CREATED)
+    if payment.create():
+        for link in payment.links:
+            if link.rel == 'approval_url':
+                return Response({'approvalUrl': str(link.href)}, status=status.HTTP_201_CREATED)
 
-        return Response({'error': payment.error}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'error': payment.error}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Add a default return statement
+    return Response({"error": "An unexpected error occurred."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 @csrf_exempt

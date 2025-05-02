@@ -76,9 +76,8 @@ class NewCartItemSerializer(serializers.ModelSerializer):
     def get_order_id(self,cartitem):
         order_id = cartitem.cart.cart_id
         return order_id
-    def get_order_date(self,cartitem):
-        order_date = cartitem.cart.modified_at
-        return order_date
+    def get_order_date(self, cartitem):
+    return cartitem.cart.modified_at.date().isoformat()
 
 class UserSerializer(serializers.ModelSerializer):
     ordered_cakes = serializers.SerializerMethodField()
