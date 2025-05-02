@@ -9,7 +9,7 @@ from django.conf import settings
 import paypalrestsdk
 from django.views.decorators.csrf import csrf_exempt
 import uuid
-BASE_URL =settings.REACT_BASE_URL or 'http://localhost:5173'
+BASE_URL = settings.REACT_BASE_URL or 'http://localhost:5173'
 
 paypalrestsdk.configure({
     'mode':settings.PAYPAL_MODE,
@@ -148,7 +148,11 @@ def register_user(request):
 @csrf_exempt
 @api_view(['POST'])
 def initiate_paypal_payment(request):
-    if request.method == 'POST' and request.user.is_authenticated:
+       if not request.user.is_authenticated:
+        return Response(
+            {"error": "Authentication required"},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
         tx_ref = str(uuid.uuid4())
         user = request.user
         cart_id = request.data.get('cart_id')
