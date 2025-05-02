@@ -27,7 +27,7 @@ SECRET_KEY = (os.getenv('SECRET_KEY') or 'django-insecure-d11tpwdhpkzpoxe&eraw$y
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'cakeshop-wi4m.onrender.com','teo.onrender.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'cakeshop-wi4m.onrender.com','teofront-mdabwr1su-benards-projects-4dfc2d09.vercel.app','teo.onrender.com']
 
 
 # Application definition
