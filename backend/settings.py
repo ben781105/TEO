@@ -72,7 +72,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5177",
     "http://localhost:5178",
     "http://localhost:5179",
-    'https://cakeshop-wi4m.onrender.com'
+    'https://cakeshop-wi4m.onrender.com',
+    'https://teofront-mdabwr1su-benards-projects-4dfc2d09.vercel.app',
     
 ]
 
