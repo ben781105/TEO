@@ -167,7 +167,8 @@ REST_FRAMEWORK ={
 SIMPLE_JWT ={
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60)
 }
-REACT_BASE_URL = os.getenv('REACT_BASE_URL')
+REACT_BASE_URL = os.getenv("REACT_BASE_URL", "http://localhost:5173")
+
 
 
 PAYPAL_CLIENT_ID =os.getenv('PAYPAL_CLIENT_ID')
