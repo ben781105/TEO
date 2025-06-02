@@ -23,6 +23,20 @@ def cakes(request):
     serializer = CakeSerializer(cakes, many=True)
         
     return Response(serializer.data)
+
+@api_view(['GET'])
+def latest_cakes(request):
+    cakes = Cake.objects.filter(is_latest = True)
+    serializer = CakeSerializer(cakes, many=True)
+        
+    return Response(serializer.data)
+
+@api_view(['GET'])
+def bestselling_cakes(request):
+    cakes = Cake.objects.filter(is_bestselling = True)
+    serializer = CakeSerializer(cakes, many=True)
+        
+    return Response(serializer.data)
 @api_view(['GET'])
 def cake_detail(request,slug):
     cake = Cake.objects.get(slug=slug)

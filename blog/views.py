@@ -17,6 +17,13 @@ def postView(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
+def post_home(request):
+    posts = Post.objects.filter(is_home = True)
+    serializer = PostSerializer(posts,many=True)
+
+    return Response(serializer.data)
+
+@api_view(['GET'])
 def content(request,slug):
     posts = Post.objects.get(slug=slug)
     serializer = ContentSerializer(posts)

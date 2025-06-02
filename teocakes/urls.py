@@ -4,6 +4,8 @@ from .views import ContactMessageView
 
 urlpatterns = [
     path('cakes/',views.cakes, name= 'cake'),
+    path('latest/',views.latest_cakes, name='latest'),
+    path('bestselling/',views.bestselling_cakes, name='bestselling'),
     path('cake_detail/<slug:slug>/',views.cake_detail, name= 'cake_detail'),
     path('add_cake/',views.add_cake, name= 'add_cake'),
     path('cake_in_cart',views.cake_in_cart,name='cake_in_cart'),

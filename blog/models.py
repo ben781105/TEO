@@ -21,6 +21,7 @@ class Post(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
     category = models.CharField(max_length=100, choices= CATEGORY,blank=True,null=True)
     tags =TaggableManager(blank=True)
+    is_home = models.BooleanField(default=False)
 
     
     def save(self, *args, **kwargs):

@@ -13,6 +13,9 @@ class Cake(models.Model):
     description=models.TextField(blank=True,null=True)
     price =models.DecimalField(max_digits=10,decimal_places=2)
     category = models.CharField(max_length=100, choices=CATEGORY,blank=True,null=True)
+    is_latest = models.BooleanField(default=False)
+    is_bestselling = models.BooleanField(default= False)
+
 
     def __str__(self):
         return self.name
